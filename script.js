@@ -72,13 +72,19 @@
       });
       transition.finished.then(endSwitch, endSwitch);
 
+      // Percentages, not pixels. Arc on a 2x 4K display drew the pixel version from
+      // roughly half the button's position at roughly half the radius, then snapped
+      // the uncovered corners. Percentages resolve against the snapshot itself, so
+      // the circle lands right whatever scale the browser uses for it.
+      // A circle() percentage radius is relative to sqrt(width^2 + height^2) / sqrt(2).
+      var w = window.innerWidth, h = window.innerHeight;
+      var at = ' at ' + (originX / w * 100) + '% ' + (originY / h * 100) + '%)';
+      var endRadius = (radius / (Math.hypot(w, h) / Math.SQRT2) * 100) + '%';
+
       transition.ready.then(function () {
         root.animate(
           {
-            clipPath: [
-              'circle(0px at ' + originX + 'px ' + originY + 'px)',
-              'circle(' + radius + 'px at ' + originX + 'px ' + originY + 'px)'
-            ]
+            clipPath: ['circle(0%' + at, 'circle(' + endRadius + at]
           },
           {
             duration: 520,
