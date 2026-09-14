@@ -1,0 +1,605 @@
+/* =============================================================
+   Faisal — portfolio
+   Order: tokens → base → layout → header → sections → responsive → motion
+   Palette values are fixed; see the design spec §4.
+   Light --muted is #67655C on the #EDEAE0 ground — 4.86:1, the tightest pair here.
+   Because --muted is darker than the background, DARKENING the ground reduces their
+   contrast rather than increasing it; the two move together. Run tools/check-contrast.py
+   after touching either.
+   ============================================================= */
+
+/* ---------- metric-matched fallbacks ---------- */
+/* While Inter and Plex download, the browser draws a system font. If that
+   substitute has different metrics, text reflows the moment the webfont
+   lands. These faces wrap local system fonts and scale them to match the
+   real ones, so the swap is invisible.
+   size-adjust is measured (target advance width / fallback advance width);
+   ascent/descent come from each font's bounding box. */
+@font-face {
+  font-family: "Inter fallback";
+  src: local("Helvetica Neue");
+  size-adjust: 106.25%;
+  ascent-override: 91.29%;
+  descent-override: 22.59%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Inter fallback win";
+  src: local("Arial");
+  size-adjust: 107.22%;
+  ascent-override: 90.47%;
+  descent-override: 22.38%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Plex fallback";
+  src: local("Menlo");
+  size-adjust: 99.66%;
+  ascent-override: 102.35%;
+  descent-override: 27.09%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Plex fallback win";
+  src: local("Courier New");
+  size-adjust: 99.98%;
+  ascent-override: 102.02%;
+  descent-override: 27%;
+  line-gap-override: 0%;
+}
+
+/* ---------- tokens ---------- */
+:root {
+  /* Palette values live here once. The blocks below only remap them. */
+  --l-bg: #EDEAE0;
+  --l-ink: #141413;
+  --l-dim: #3C3B35;
+  --l-muted: #67655C;
+  --l-accent: #6E1D2E;
+  --l-line: rgba(20, 20, 19, .16);
+  --l-accent-line: rgba(110, 29, 46, .42);
+  --l-row-hover: rgba(20, 20, 19, .035);
+
+  --d-bg: #11110F;
+  --d-ink: #F3EEE3;
+  --d-dim: #C4C0B7;
+  --d-muted: #9D9A91;
+  --d-accent: #E9788A;
+  --d-line: rgba(244, 239, 227, .14);
+  --d-accent-line: rgba(233, 120, 138, .40);
+  --d-row-hover: rgba(244, 239, 227, .04);
+
+  /* active theme — light by default */
+  --bg: var(--l-bg);
+  --ink: var(--l-ink);
+  --dim: var(--l-dim);
+  --muted: var(--l-muted);
+  --accent: var(--l-accent);
+  --line: var(--l-line);
+  --accent-line: var(--l-accent-line);
+  --row-hover: var(--l-row-hover);
+
+  --sans: Inter, "Inter fallback", "Inter fallback win", system-ui, -apple-system, sans-serif;
+  --mono: "IBM Plex Mono", "Plex fallback", "Plex fallback win", ui-monospace, SFMono-Regular, monospace;
+
+  color-scheme: light;
+}
+
+/* dark by OS preference, unless the visitor explicitly chose light */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: var(--d-bg);
+    --ink: var(--d-ink);
+    --dim: var(--d-dim);
+    --muted: var(--d-muted);
+    --accent: var(--d-accent);
+    --line: var(--d-line);
+    --accent-line: var(--d-accent-line);
+    --row-hover: var(--d-row-hover);
+    color-scheme: dark;
+  }
+}
+
+/* dark by explicit choice — must also win on a light OS */
+:root[data-theme="dark"] {
+  --bg: var(--d-bg);
+  --ink: var(--d-ink);
+  --dim: var(--d-dim);
+  --muted: var(--d-muted);
+  --accent: var(--d-accent);
+  --line: var(--d-line);
+  --accent-line: var(--d-accent-line);
+  --row-hover: var(--d-row-hover);
+  color-scheme: dark;
+}
+
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--dim);
+  font-family: var(--sans);
+  font-size: 15.5px;
+  line-height: 1.68;
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--accent); color: var(--bg); }
+
+h1, h2, h3 { color: var(--ink); font-weight: 500; margin: 0; }
+
+/* Keeps single words from stranding on their own line. */
+h1, h2, h3, .row-title { text-wrap: balance; }
+p { text-wrap: pretty; }
+p { margin: 0 0 14px; }
+strong { color: var(--ink); font-weight: 500; }
+
+a { color: inherit; text-decoration: none; }
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------- layout helpers ---------- */
+.wrap { width: min(860px, 100% - 80px); margin-inline: auto; }
+/* Measures are in px, not ch. A ch-based measure is a different pixel width in
+   every font, so the text rewraps when the webfont swaps in — and size-adjust
+   can't help, because it scales the ch unit and the glyphs by the same factor.
+   606px is what 62ch resolves to in Inter at 15.5px. */
+.measure { max-width: 606px; }
+
+.mono {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+
+/* ---------- header ---------- */
+.site-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 34px 0 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.wordmark {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+}
+
+/* The caret is a block cursor sitting after the name. */
+.caret {
+  display: inline-block;
+  width: .5em;
+  height: 1em;
+  background: var(--accent);
+  margin-left: .14em;
+  transform: translateY(.12em);
+}
+
+.site-header nav {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .04em;
+}
+
+.site-header nav a { color: var(--muted); transition: color .15s ease; }
+.site-header nav a:hover { color: var(--ink); }
+
+#theme-toggle {
+  background: none;
+  border: 0;
+  padding: 4px;
+  margin: 0;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1;
+  transition: color .15s ease;
+}
+#theme-toggle:hover { color: var(--ink); }
+/* The glyph turns over as the circle wipe crosses the page. */
+#theme-toggle span {
+  display: inline-block;
+  transition: transform .52s cubic-bezier(.22, .61, .36, 1);
+}
+:root[data-theme="dark"] #theme-toggle span { transform: rotate(180deg); }
+
+/* Scrollbar tinted to the active theme rather than the OS default. */
+* { scrollbar-color: var(--line) transparent; }
+
+/* ---------- intro ---------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.intro { padding: 56px 0 0; }
+
+
+/* ---------- sections and rows (shared by research + projects) ---------- */
+.section { padding: 74px 0 0; }
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 12px;
+  margin-bottom: 8px;
+  border-top: 1px solid var(--line);
+  text-transform: uppercase;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: .09em;
+  color: var(--ink);
+
+  /* Pins while its own entries scroll past, so you always know which
+     section you're reading. The background is opaque so rows pass under it. */
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--bg);
+  padding-bottom: 10px;
+  margin-bottom: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 118px 1fr;
+  gap: 24px;
+  padding: 22px 14px 22px;
+  margin-inline: -14px;
+  border-bottom: 1px solid var(--line);
+  border-radius: 3px;
+  transition: background-color .15s ease;
+}
+.row:first-of-type { border-top: 1px solid var(--line); }
+.row:hover { background-color: var(--row-hover); }
+/* The date column lifts out of muted on hover, so the eye knows which row it's on. */
+.row-meta { padding-top: 4px; line-height: 1.5; transition: color .18s ease; }
+.row:hover .row-meta { color: var(--ink); }
+
+.row-body > p:last-child { margin-bottom: 0; }
+/* 512px = 58ch in Inter at 14px. See the note on .measure above. */
+.row-body p:not(.tags):not(.row-role) { max-width: 512px; font-size: 14px; }
+
+.row-title { font-size: 15px; font-weight: 600; }
+.row-title em { font-style: normal; color: var(--muted); }
+
+.row-role {
+  color: var(--accent);
+  text-transform: uppercase;
+  font-size: 10.5px;
+  letter-spacing: .07em;
+  margin: 5px 0 11px;
+}
+
+/* Marker highlight: accent ground, page colour for the text. Same inversion
+   as ::selection, so it reads as part of the same system. */
+.gpa {
+  background: var(--accent);
+  color: var(--bg);
+  padding: 3px 7px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+/* Citation line: authors and venue, quieter than the abstract beneath it. */
+.citation {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--muted);
+  /* Top margin replaces the spacing the author-position label used to give. */
+  margin: 6px 0 12px;
+  max-width: 512px;
+}
+.citation strong { color: var(--ink); font-weight: 500; }
+.citation em { font-style: italic; }
+
+/* Workstream list inside a role — breadth without a wall of prose. */
+.threads {
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+  max-width: 512px;
+  font-size: 14px;
+}
+.threads li {
+  position: relative;
+  padding-left: 15px;
+  margin-bottom: 9px;
+}
+.threads li::before {
+  content: "\00B7";
+  position: absolute;
+  left: 3px;
+  color: var(--accent);
+}
+.threads strong { color: var(--ink); font-weight: 500; }
+
+.row-link {
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent-line);
+  transition: border-color .18s ease;
+}
+.row-link:hover { border-bottom-color: var(--accent); }
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 14px 0 0;
+  font-size: 10px;
+  letter-spacing: .04em;
+}
+.tags span {
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 3px 7px;
+  transition: border-color .18s ease;
+}
+.row:hover .tags span { border-color: var(--accent-line); }
+
+.award {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 7px;
+  border: 1px solid var(--accent-line);
+  border-radius: 2px;
+  color: var(--accent);
+  font-size: 9.5px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  vertical-align: 2px;
+}
+
+
+/* ---------- footer ---------- */
+.site-footer {
+  margin-top: 96px;
+  padding: 30px 0 56px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 18px 32px;
+}
+
+.footer-mail {
+  color: var(--ink);
+  font-size: 19px;
+  border-bottom: 1px solid var(--accent-line);
+  transition: color .18s ease, border-color .18s ease;
+}
+.footer-mail:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+.footer-links { display: flex; gap: 18px; }
+.footer-links a { color: var(--muted); transition: color .15s ease; }
+.footer-links a:hover { color: var(--ink); }
+
+.colophon {
+  flex-basis: 100%;
+  margin: 14px 0 0;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* ---------- wordmark animation ---------- */
+/* Characters are hidden by display:none rather than opacity so the caret
+   advances with the text instead of sitting at the final width from the start. */
+.wordmark-text .ch { display: none; }
+.wordmark-text .ch.is-in { display: inline; }
+
+.caret { animation: caret-blink 1.06s steps(1, end) infinite; }
+@keyframes caret-blink {
+  0%, 50%      { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+.caret.is-done {
+  animation: none;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+
+/* Hovering the name brings the cursor back — it's still a text field,
+   it just won't retype itself. */
+.wordmark:hover .caret.is-done,
+.wordmark:focus-visible .caret.is-done {
+  opacity: 1;
+  animation: caret-blink 1.06s steps(1, end) infinite;
+}
+
+.wordmark.is-refusing { animation: wordmark-shake .38s cubic-bezier(.36, .07, .19, .97); }
+@keyframes wordmark-shake {
+  0%   { transform: translateX(0)     rotate(0); }
+  15%  { transform: translateX(-4px)  rotate(-1.2deg); }
+  30%  { transform: translateX(3.5px) rotate(1deg); }
+  45%  { transform: translateX(-2.5px) rotate(-.7deg); }
+  60%  { transform: translateX(2px)   rotate(.5deg); }
+  80%  { transform: translateX(-1px)  rotate(-.2deg); }
+  100% { transform: translateX(0)     rotate(0); }
+}
+
+/* ---------- disclosures (teaching, coursework) ---------- */
+/* Native <details> so it opens with JavaScript disabled. */
+.disclosure { margin-top: 7px; }
+
+.disclosure summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  /* Padding, not margin — the summary is the hit area, and 18px of text
+     alone is under the 24px minimum target size. */
+  padding: 5px 0;
+  cursor: pointer;
+  list-style: none;
+  text-transform: uppercase;
+  font-size: 10.5px;
+  letter-spacing: .07em;
+  transition: color .15s ease;
+}
+.disclosure summary::-webkit-details-marker { display: none; }
+.disclosure summary:hover { color: var(--ink); }
+
+/* Own marker, since the native triangle can't be styled consistently. */
+.disclosure summary::after {
+  content: "+";
+  color: var(--accent);
+  font-size: 12px;
+  line-height: 1;
+  transform: translateY(-.5px);
+}
+.disclosure[open] summary::after { content: "\2013"; }
+
+.disclosure ul {
+  margin: 12px 0 2px;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--dim);
+}
+
+.disclosure li {
+  position: relative;
+  padding-left: 13px;
+  margin-bottom: 5px;
+  break-inside: avoid;
+}
+
+/* Short items go two-up on wide screens; long ones stay in one column. */
+.disclosure.cols ul { columns: 2; column-gap: 30px; }
+.disclosure li::before {
+  content: "\00B7";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+}
+
+.disclosure[open] ul { animation: disclosure-in .22s ease both; }
+@keyframes disclosure-in {
+  from { opacity: 0; transform: translateY(-3px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- theme transition ---------- */
+/* The browser's default cross-fade is switched off; script.js drives a
+   clip-path circle out of the toggle button instead. The outgoing snapshot
+   holds still underneath while the incoming theme is revealed over it. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) { z-index: 0; }
+::view-transition-new(root) { z-index: 1; }
+
+/* While the theme swaps, switch off every colour and hover transition. The
+   view transition's new snapshot is live, so without this ~130 links, labels
+   and tag borders fade in from the old palette for 150-180ms inside the
+   circle, and the wipe reveals a half-changed page. The toggle glyph keeps
+   its turn, which is meant to travel with the wipe. */
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
+}
+.theme-switching #theme-toggle span {
+  transition: transform .52s cubic-bezier(.22, .61, .36, 1) !important;
+}
+
+/* The blanket reduced-motion rule below doesn't reach view-transition
+   pseudo-elements, so they're silenced explicitly. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 700px) {
+  .wrap { width: min(860px, 100% - 48px); }
+
+  body { font-size: 15px; }
+
+  .site-header { padding-top: 26px; }
+  .site-header nav { gap: 14px; }
+  /* Four links plus the toggle overflow 375px. The sticky section markers
+     already tell you where you are, so the in-page anchors are the ones to
+     drop — scrolling still reaches every section. */
+  .nav-section { display: none; }
+  .site-header nav a,
+  #theme-toggle {
+    /* 44px touch targets without disturbing the baseline row */
+    padding-block: 13px;
+  }
+  /* The toggle's line-height:1 leaves it short of 44px on padding alone,
+     and the glyph alone is narrower than the 24px minimum target width. */
+  #theme-toggle {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .intro { padding-top: 40px; }
+  .section { padding-top: 56px; }
+
+  /* Metadata becomes a single line above the entry rather than a column. */
+  .row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .row { padding-inline: 10px; margin-inline: -10px; }
+  .row-meta { padding-top: 0; }
+
+  .meta-break { display: none; }
+  .meta-break + span::before { content: " · "; }
+
+
+  .disclosure.cols ul { columns: 1; }
+  .disclosure summary { padding-block: 13px; }
+
+  .row-body p:not(.tags):not(.row-role) { max-width: none; }
+
+  .site-footer { margin-top: 72px; }
+  .footer-mail { font-size: 17px; }
+}
+
+@media (max-width: 380px) {
+  .award { display: none; }
+}
+
+/* ---------- motion preferences ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Faisal — research &amp; engineering</title>
+<meta name="description" content="Faisal — computer science master's student at USC and graduate research assistant in the Melady Lab, working on retrieval, evaluation, and data pipelines for time-series models.">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Faisal — research &amp; engineering">
+<meta property="og:description" content="CS master's student at USC and graduate research assistant in the Melady Lab, working on retrieval, evaluation, and data pipelines for time-series models.">
+<meta name="twitter:card" content="summary">
+
+<meta name="theme-color" content="#EDEAE0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11110F" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='25' x='4' font-family='monospace' font-size='24' fill='%236E1D2E'>f</text></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="styles.css">
+
+<!-- Apply the stored theme before first paint so the page never flashes the wrong one. -->
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'dark' || t === 'light') {
+      document.documentElement.setAttribute('data-theme', t);
+    }
+  } catch (e) { /* private mode — fall back to the OS preference */ }
+})();
+</script>
+</head>
+<body id="top">
+
+<header class="site-header wrap">
+  <a class="wordmark" href="#top" aria-label="faisal — back to top"><span class="wordmark-text">faisal</span><span class="caret" aria-hidden="true"></span></a>
+  <nav aria-label="Primary">
+    <a class="nav-section" href="#experience">experience</a>
+    <a class="nav-section" href="#projects">projects</a>
+    <a class="nav-section" href="#publications">papers</a>
+    <a href="https://github.com/FaisalXL" target="_blank" rel="noopener">github&nbsp;↗</a>
+    <a href="Faisal-CV.pdf" target="_blank" rel="noopener">cv&nbsp;↗</a>
+    <button id="theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme">
+      <span aria-hidden="true">◐</span>
+    </button>
+  </nav>
+</header>
+<main class="wrap">
+
+<section class="intro">
+  <h1 class="visually-hidden">Faisal</h1>
+  <div class="measure">
+    <p>cs grad student at <strong>USC</strong>. research assistant at the <strong>Melady Lab</strong>, where we're poking at what happens when you point language models at time series.</p>
+    <p>before that: path planning for eVTOLs at <strong>IISc</strong>, satellite telemetry anomaly detection at <strong>ISRO</strong>. i seem to keep landing on problems where the data is bad and the system has to be trusted anyway.</p>
+    <p>i like math and cs</p>
+  </div>
+</section>
+<section class="section" id="experience">
+  <div class="section-head mono"><span>Experience</span><span>03</span></div>
+
+  <article class="row">
+    <div class="row-meta mono">2026 — now<br class="meta-break"><span>Los Angeles</span></div>
+    <div class="row-body">
+      <h2 class="row-title">Melady Lab <em>· USC</em></h2>
+      <p class="row-role mono">Graduate Research Assistant</p>
+      <p>I'm on three projects in the lab. These four pieces are mine.</p>
+      <ul class="threads">
+        <li><strong>Time-series RAG.</strong> I built the retrieval engine for a RAG system for time series that finds past series similar to an input series or text. This augments a forecasting model with real historical analogues to work from. It searches 33.4M observations across 16 domains and beat the previous engine head-to-head on 92% of queries.</li>
+        <li><strong>Pretraining corpus.</strong> A config-driven ETL pipeline that built 500K aligned time-series and text records across 14 domains, for continued pretraining of a time-series foundation model.</li>
+        <li><strong>Embedding baseline.</strong> The control for the lab's main model. A frozen TimesFM-2.5 encoder feeds Qwen3-1.7B through LoRA, to test whether a language model can read a series straight from continuous embeddings.</li>
+        <li><strong>Evaluation harness.</strong> A reproducible harness that runs 8 language and time-series models across TemporalBench, TimeSeriesExam and CiK, covering 3,521 multiple-choice questions and 355 forecasting instances. One result: Llama 3.1 8B forecasts significantly worse when it can see the series (p&nbsp;&lt;&nbsp;0.05).</li>
+      </ul>
+      <p>Paper in submission.</p>
+      <p class="tags mono"><span>Python</span><span>Time series</span><span>LLMs</span><span>Parquet</span><span>TimesFM</span><span>LoRA</span></p>
+    </div>
+  </article>
+
+  <article class="row">
+    <div class="row-meta mono">2024 — 2025<br class="meta-break"><span>Bengaluru</span></div>
+    <div class="row-body">
+      <h2 class="row-title">DESE <em>· Indian Institute of Science</em></h2>
+      <p class="row-role mono">Research Staff</p>
+      <p>I built the network-isolation layer for a unified aircraft cabin display — a Boeing collaboration consolidating several avionics domains onto one screen — using eBPF/XDP packet filters to drop traffic from unauthorized sources, demonstrated live against a simulated ping-flood on one domain.</p>
+      <p>I also designed a risk-aware bidirectional A* planner for eVTOL routing that penalizes high-risk airspace using population, building, and weather data, cutting casualty-risk exposure by around 30%.</p>
+      <p class="tags mono"><span>eBPF/XDP</span><span>C</span><span>Path planning</span><span>Simulation</span></p>
+    </div>
+  </article>
+
+  <article class="row">
+    <div class="row-meta mono">2023 — 2024<br class="meta-break"><span>Bengaluru</span></div>
+    <div class="row-body">
+      <h2 class="row-title">Indian Space Research Organisation</h2>
+      <p class="row-role mono">Research &amp; Software Intern</p>
+      <p>I developed and benchmarked unsupervised anomaly detection — LSTMs and autoencoders — over 186k rows of multivariate satellite telemetry across roughly 40 features, improving F1 by about 30% against the existing baseline.</p>
+      <p>Feature-importance analysis then filtered trivial anomalies, cutting false positives by about a quarter across several satellite subsystems.</p>
+      <p class="tags mono"><span>TensorFlow</span><span>LSTM</span><span>Autoencoders</span><span>Anomaly detection</span></p>
+    </div>
+  </article>
+</section>
+<section class="section" id="projects">
+  <div class="section-head mono"><span>Projects</span><span>02</span></div>
+
+  <article class="row">
+    <div class="row-meta mono">May 2026</div>
+    <div class="row-body">
+      <h2 class="row-title">Adaptive RAG — biomedical domain</h2>
+      <p class="row-role mono">Retrieval</p>
+      <p>A router that decides whether a biomedical question is better answered by Llama 3.1 8B alone or by retrieving over a FAISS index of PubMed abstracts first. I trained three routers — XGBoost, DistilBERT, and a Llama LoRA adapter — on weak supervision from MedHallu, then evaluated on PubMedQA.</p>
+      <p>Retrieving every time scored highest at 78% against 53% for the model alone; the XGBoost router reached 69% while skipping retrieval on a good share of questions, which is the tradeoff the project was actually testing.</p>
+      <p><a class="row-link" href="https://github.com/FaisalXL/rag-biomed" target="_blank" rel="noopener">github.com/FaisalXL/rag-biomed ↗</a></p>
+      <p class="tags mono"><span>Llama 3.1</span><span>FAISS</span><span>LoRA</span><span>XGBoost</span><span>DistilBERT</span></p>
+    </div>
+  </article>
+
+  <article class="row">
+    <div class="row-meta mono">Oct 2025</div>
+    <div class="row-body">
+      <h2 class="row-title">LegendIDE <span class="award mono">Winner · CalHacks 12.0</span></h2>
+      <p class="row-role mono">Team project</p>
+      <p>A real-time collaborative IDE where the AI holds shared context across everyone in the session, so it understands what each teammate changed and why. I worked on session orchestration and Git operations over FastAPI and WebRTC, and on a multi-stage review pipeline chaining CodeRabbit, Claude, and Letta. Honorable mention in the Letta track.</p>
+      <p><a class="row-link" href="https://github.com/FaisalXL/LegendIDE" target="_blank" rel="noopener">github.com/FaisalXL/LegendIDE ↗</a></p>
+      <p class="tags mono"><span>FastAPI</span><span>WebRTC</span><span>React</span><span>LLM agents</span></p>
+    </div>
+  </article>
+</section>
+<section class="section" id="publications">
+  <div class="section-head mono"><span>Publications</span><span>02</span></div>
+
+  <article class="row">
+    <div class="row-meta mono">2026<br class="meta-break"><span>Springer</span></div>
+    <div class="row-body">
+      <h2 class="row-title">Att-ConvGLUNet: A Novel Deep Learning Framework for Enhanced Brain Tumour Segmentation and Classification in MRI DICOM Imaging</h2>
+      <p class="citation">Jamuna S. Murthy, Kandaswamy Dhanashekar, <strong>Faisal</strong><br>
+        <em>Lecture Notes in Networks and Systems</em>, Springer Nature Singapore, pp. 109–122</p>
+      <p><a class="row-link" href="https://doi.org/10.1007/978-981-95-0497-8_8" target="_blank" rel="noopener">doi.org/10.1007/978-981-95-0497-8_8 ↗</a></p>
+    </div>
+  </article>
+
+  <article class="row">
+    <div class="row-meta mono">2025<br class="meta-break"><span>Wiley</span></div>
+    <div class="row-body">
+      <h2 class="row-title">Deciphering Gut Microbiome Dynamics in Irritable Bowel Syndrome Using Deep Learning</h2>
+      <p class="citation"><strong>Faisal</strong>, S. R. Mani Sekhar, D. S. Anurag, Vijaya Kumar, Dhruv Shetty, Divakar Sharma<br>
+        <em>Neurogastroenterology &amp; Motility</em>, 37(12)</p>
+      <p><a class="row-link" href="https://doi.org/10.1111/nmo.70153" target="_blank" rel="noopener">doi.org/10.1111/nmo.70153 ↗</a></p>
+    </div>
+  </article>
+</section>
+
+<section class="section" id="education">
+  <div class="section-head mono"><span>Education</span></div>
+  <div class="row">
+    <div class="row-meta mono">2025 — 2027</div>
+    <div class="row-body">
+      <h2 class="row-title">University of Southern California</h2>
+      <p class="row-role mono">MS Computer Science · <span class="gpa">GPA 4.0</span></p>
+      <details class="disclosure">
+        <summary class="mono">Teaching</summary>
+        <ul>
+          <li>DSO 429, Digital Transformation of Business: AI and Smart Contracts — Marshall School of Business, Fall 2026</li>
+          <li>Analytics — USC Summer Programs, Summer 2026</li>
+        </ul>
+      </details>
+      <details class="disclosure">
+        <summary class="mono">Coursework</summary>
+        <ul>
+          <li>CSCI 544 · Applied Natural Language Processing</li>
+          <li>CSCI 566 · Deep Learning and Its Applications</li>
+          <li>CSCI 570 · Analysis of Algorithms</li>
+          <li>CSCI 596 · Scientific Computing and Visualization</li>
+          <li>CSCI 619 · End-to-End Learning and Optimization</li>
+          <li>ISE 633 · Large Scale Optimization and Machine Learning</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+  <div class="row">
+    <div class="row-meta mono">2020 — 2024</div>
+    <div class="row-body">
+      <h2 class="row-title">Ramaiah Institute of Technology</h2>
+      <p class="row-role mono">BE Information Science &amp; Engineering · <span class="gpa">GPA 9.41/10</span></p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer wrap">
+  <a class="footer-mail" href="mailto:flnu@usc.edu">flnu@usc.edu</a>
+  <nav class="footer-links mono" aria-label="Elsewhere">
+    <a href="https://github.com/FaisalXL" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://linkedin.com/in/faisalxl" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="Faisal-CV.pdf" target="_blank" rel="noopener">CV</a>
+  </nav>
+  <p class="colophon mono">© <span id="year">2026</span> Faisal · idk where im headed lol</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
